@@ -72,5 +72,5 @@ CREATE TABLE VCD_RETURN(
     vcd_id INT, -- VCD 编号
     user_id INT, -- 用户编号
     date DATETIME, -- 归还时间
-    expire INT -- 预期天数
+    expire INT -- 逾期天数
 );
