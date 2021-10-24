@@ -1,3 +1,4 @@
+import logging
 import prettytable
 from prettytable import PrettyTable
 from HTMLTable import HTMLTable
@@ -6,22 +7,39 @@ from .base_operations import BaseManager
 
 
 class VCDManagerOps(BaseManager, ABC):
-    def __init__(self, db_user, db_passwd, db_name, db_ip="127.0.0.1", db_port=3306, db_enc='utf8'):
-        super(VCDManagerOps, self).__init__(db_user, db_passwd, db_name, db_ip, db_port, db_enc)
+    def __init__(self):
+        super(VCDManagerOps, self).__init__()
+        self.db_name = 'VCD_MANAGER'
 
     @property
     def tables(self):
         check_str = self.run_sql_cmd('SHOW TABLES;')
-        tabs = [ele[0] for ele in check_str]
-
-        return tabs
+        try:
+            tabs = [ele[0] for ele in check_str]
+        except TypeError:
+            # when check_str is None, TypeError: 'NoneType' object is not iterable
+            logging.error('{}, [MODULE]: {}, [ACTION]: {}'.format('No tables in database',
+                                                                  self.__class__.__name__,
+                                                                  'get tables list via @tables'))
+            return []
+        else:
+            return tabs
 
     ''' get properties of all elements from the specified table
-    @table: specified table
+    @:param table, specified table name, str
     '''
-    def show_elements(self, table: str):
+    def get_table_head(self, table: str):
+        try:
+            table_head = [ele[0] for ele in self.run_sql_cmd('SHOW COLUMNS FROM {};'.format(table))]
+            return table_head
+        except TypeError:
+            logging.error('{}, [MODULE]: {}, [ACTION]: {}'.format('Connection login not establish',
+                                                                  self.__class__.__name__, 'get data of table head'))
+            return None
+
+    def get_table_elements(self, table: str):
         res = []
-        table_head = [ele[0] for ele in self.run_sql_cmd('SHOW COLUMNS FROM {};'.format(table))]
+        table_head = self.get_table_head(table)
         check_str = self.run_sql_cmd('SELECT * FROM {};'.format(table))
         for ele in check_str:
             ele_dict = {}
@@ -32,10 +50,12 @@ class VCDManagerOps(BaseManager, ABC):
         return res
 
     def beauty_show_elements_html(self, table: str):
-        tab_caption = "SELECT * FROM {};".format(table)
+        tab_caption = "Table {}".format(table)
         tab = HTMLTable(caption=tab_caption)
         tab.caption.set_style({
             'font-size': '15px',
+            # 'background-color': '#48a6fb',
+            'text-align': 'center',
         })
         tab.set_style({
             'border-collapse': 'collapse',
@@ -48,6 +68,7 @@ class VCDManagerOps(BaseManager, ABC):
             'border-width': '1px',
             'border-style': 'solid',
             'padding': '5px',
+            'text-align': 'center',
         })
         tab.set_header_row_style({
             'color': '#fff',
@@ -60,7 +81,7 @@ class VCDManagerOps(BaseManager, ABC):
         table_head = [[ele[0] for ele in self.run_sql_cmd('SHOW COLUMNS FROM {};'.format(table))]]
         tab.append_header_rows(table_head)
         table_body = []
-        elements = self.show_elements(table)
+        elements = self.get_table_elements(table)
         for ele in elements:
             table_body.append(list(ele.values()))
         tab.append_data_rows(table_body)
@@ -68,15 +89,15 @@ class VCDManagerOps(BaseManager, ABC):
         for row in tab.iter_data_rows():
             idx += 1
             if idx % 2:
-                row.set_style({'background-color': '#ffdddd',})
+                row.set_style({'background-color': '#ffdddd', })
             else:
-                row.set_style({'background-color': '#ffffff',})
+                row.set_style({'background-color': '#ffffff', })
         tab_html = tab.to_html()
 
         return tab_html
 
     def beauty_show_elements_prettytable(self, table: str):
-        elements = self.show_elements(table)
+        elements = self.get_table_elements(table)
         if not elements:
             return
         ptb = PrettyTable()
