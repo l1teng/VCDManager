@@ -11,20 +11,6 @@ class VCDManagerOps(BaseManager, ABC):
         super(VCDManagerOps, self).__init__()
         self.db_name = 'VCD_MANAGER'
 
-    @property
-    def tables(self):
-        check_str = self.run_sql_cmd('SHOW TABLES;')
-        try:
-            tabs = [ele[0] for ele in check_str]
-        except TypeError:
-            # when check_str is None, TypeError: 'NoneType' object is not iterable
-            logging.error('{}, [MODULE]: {}, [ACTION]: {}'.format('No tables in database',
-                                                                  self.__class__.__name__,
-                                                                  'get tables list via @tables'))
-            return []
-        else:
-            return tabs
-
     ''' get properties of all elements from the specified table
     @:param table, specified table name, str
     '''
@@ -107,29 +93,49 @@ class VCDManagerOps(BaseManager, ABC):
         for ele in elements:
             ptb.add_row(list(ele.values()))
 
-        # return str(ptb)
         return ptb
 
-    def insert_element(self, table: str, insert_element: dict):
-        k_list = list(insert_element.keys())
-        k_str = ''
-        for ele in k_list:
-            k_str += '{}, '.format(ele)
-        if k_str != '':
-            k_str = k_str[: -2]
+    # insert items
 
-        v_list = list(insert_element.values())
-        v_str = ''
-        for ele in v_list:
-            if type(ele) == int or type(ele) == float:
-                v_str += '{}, '.format(ele)
-            else:
-                v_str += '\"{}\", '.format(ele)
-        if v_str != '':
-            v_str = v_str[: -2]
+    def insert_sale(self, sale_info: dict):
+        self.insert_element('VCD_SALE', sale_info)
 
-        cmd = 'INSERT INTO {} ({}) VALUES ({});'.format(table, k_str, v_str)
-        self.run_sql_cmd(cmd)
+    def insert_rent(self, rent_info: dict):
+        self.insert_element('VCD_RENT', rent_info)
 
-    def select_elements(self, table: str, info: dict):
+    def insert_return(self, return_info: dict):
+        self.insert_element('VCD_RETURN', return_info)
+
+    def insert_supply(self, supply_info: dict):
+        self.insert_element('VCD_SUPPLY', supply_info)
+
+    def insert_user(self, user_info: dict):
+        self.insert_element('USER', user_info)
+
+    def insert_vcd(self, vcd_info: dict):
+        self.insert_element('VCD', vcd_info)
+
+    def insert_supplier(self, supplier_info: dict):
+        self.insert_element('SUPPLIER', supplier_info)
+
+    # query items
+    def select_element(self, table: str, info: dict):
         pass
+
+    def select_element_use_id(self, table: str, id_name: str, element_id: int):
+        res = {}
+        cursor_list_head = self.get_table_head(table)
+        cmd = 'SELECT * FROM {} WHERE {} = {};'.format(table, id_name, element_id)
+        cursor_list = self.run_sql_cmd(cmd)
+        if cursor_list is None:
+            logging.error('{}, [MODULE]: {}, [ACTION]: {}'.format('Connection login not establish',
+                                                                  self.__class__.__name__,
+                                                                  'select element via using id term'))
+            return None
+        elif len(cursor_list) == 0:
+            return res
+        cursor_list = cursor_list[0]
+        for i in range(len(cursor_list_head)):
+            res[cursor_list_head[i]] = cursor_list[i]
+
+        return res
