@@ -614,7 +614,7 @@ class Ui_VCDManager(object):
     def retranslateUi(self, VCDManager):
         _translate = QtCore.QCoreApplication.translate
         VCDManager.setWindowTitle(_translate("VCDManager", "VCD 管理系统"))
-        self.tb1_le_pswd.setText(_translate("VCDManager", "5315"))
+        self.tb1_le_pswd.setText(_translate("VCDManager", "hfut"))
         self.tb1_lb_user.setText(_translate("VCDManager", "用户名"))
         self.tb1_lb_ip.setText(_translate("VCDManager", "数据库IP"))
         self.tb1_le_user.setText(_translate("VCDManager", "root"))
