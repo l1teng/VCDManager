@@ -1,7 +1,7 @@
 import logging
 from PyQt5 import QtWidgets
 from ops import VCDManagerOps
-from .ui_vcd_manager import Ui_VCDManager
+from ui.ui_vcd_manager import Ui_VCDManager
 
 
 # VCD MANAGER
