@@ -30,7 +30,7 @@ INSERT INTO STOCK (id, vcd_id, available, stocked) VALUES (5, 5, 16, 19);
 
 -- test trigger :: UPDATE_AVAILABLE_IN_STOCK_WHEN_RENT
 INSERT INTO VCD_RENT (id, vcd_id, vcd_deposit, rent_price, rent_number, rent_limit, user_id) VALUES (1, 1, 12.01, 1.01, 2, 7, 1);
-INSERT INTO VCD_RENT (id, vcd_id, vcd_deposit, rent_price, rent_number, rent_limit, user_id) VALUES (2, 1, 12.01, 1.01, 2, 7, 1);
+INSERT INTO VCD_RENT (id, vcd_id, vcd_deposit, rent_price, rent_number, rent_limit, user_id) VALUES (2, 2, 12.02, 1.02, 2, 7, 1);
 INSERT INTO VCD_RETURN (id, vcd_id, user_id, expire) VALUES (1, 1, 1, 0);
 INSERT INTO VCD_SALE (id, vcd_id, vcd_price, vcd_number, user_id) VALUES (1, 1, 12.01, 2, 1);
 INSERT INTO VCD_SALE (id, vcd_id, vcd_price, vcd_number, user_id) VALUES (2, 2, 12.02, 2, 1);
