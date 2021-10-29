@@ -1,5 +1,6 @@
 import logging
 from PyQt5 import QtWidgets
+from PyQt5.QtCore import Qt
 from ops import VCDManagerOps
 from ui.ui_vcd_manager import Ui_VCDManager
 
@@ -406,15 +407,50 @@ class VCDManager(QtWidgets.QTabWidget, Ui_VCDManager):
                                                                  '[VCD STAT] update user name when user id is changed'))
 
     def vcd_stat_query_confirm(self):
-        vcd_id = self.tab_slct_br_sb_vcd_id.value()
+        time_s = self.tab_slct_br_dte_vcd_stat_start.dateTime()
+        time_e = self.tab_slct_br_dte_vcd_stat_end.dateTime()
+        time_s = time_s.toString(Qt.ISODate).replace('T', ' ')
+        time_e = time_e.toString(Qt.ISODate).replace('T', ' ')
 
-        # TODO: not finished
-        pass
+        self.tab_slct_br_tw_vcd_stat_sale.setColumnCount(2)
+        self.tab_slct_br_tw_vcd_stat_sale.setHorizontalHeaderLabels(['VCD 编号', '销售数量'])
+        cmd = 'CALL COUNT_SALE(timestamp(\'{}\'), timestamp(\'{}\'));'.format(time_s, time_e)
+        data = self.db_ops.run_sql_cmd(cmd)
+        self.tab_slct_br_tw_vcd_stat_sale.setRowCount(len(data))
+        for i in range(len(data)):
+            v_i = list(data[i])
+            for j in range(len(v_i)):
+                self.tab_slct_br_tw_vcd_stat_sale.setItem(i, j, QtWidgets.QTableWidgetItem(str(v_i[j])))
+                print(str(v_i[j]))
+
+        self.tab_slct_br_tw_vcd_stat_rent.setColumnCount(2)
+        self.tab_slct_br_tw_vcd_stat_rent.setHorizontalHeaderLabels(['VCD 编号', '出租数量'])
+        cmd = 'CALL COUNT_RENT(timestamp(\'{}\'), timestamp(\'{}\'));'.format(time_s, time_e)
+        data = self.db_ops.run_sql_cmd(cmd)
+        self.tab_slct_br_tw_vcd_stat_rent.setRowCount(len(data))
+        for i in range(len(data)):
+            v_i = list(data[i])
+            for j in range(len(v_i)):
+                self.tab_slct_br_tw_vcd_stat_rent.setItem(i, j, QtWidgets.QTableWidgetItem(str(v_i[j])))
+                print(str(v_i[j]))
+
+        self.tab_slct_br_tw_vcd_stat_return.setColumnCount(2)
+        self.tab_slct_br_tw_vcd_stat_return.setHorizontalHeaderLabels(['VCD 编号', '归还数量'])
+        data = self.db_ops.run_sql_cmd(cmd)
+        self.tab_slct_br_tw_vcd_stat_return.setRowCount(len(data))
+        for i in range(len(data)):
+            v_i = list(data[i])
+            for j in range(len(v_i)):
+                self.tab_slct_br_tw_vcd_stat_return.setItem(i, j, QtWidgets.QTableWidgetItem(str(v_i[j])))
+                print(str(v_i[j]))
 
     def vcd_stat_query_clear(self):
-        self.tab_slct_br_sb_vcd_id.setValue(0)
-        self.tab_slct_br_lb_vcd_name.setText('')
-        self.tab_slct_br_tw_vcd_stat.clear()
+        # self.tab_slct_br_sb_vcd_id.setValue(0)
+        # self.tab_slct_br_lb_vcd_name.setText('')
+        # self.tab_slct_br_tw_vcd_stat.clear()
+        self.tab_slct_br_tw_vcd_stat_sale.clear()
+        self.tab_slct_br_tw_vcd_stat_return.clear()
+        self.tab_slct_br_tw_vcd_stat_rent.clear()
 
     # TAB: sign up
 
