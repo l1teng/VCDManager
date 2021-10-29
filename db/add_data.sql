@@ -33,4 +33,7 @@ INSERT INTO VCD_RENT (id, vcd_id, vcd_deposit, rent_price, rent_number, rent_lim
 INSERT INTO VCD_RENT (id, vcd_id, vcd_deposit, rent_price, rent_number, rent_limit, user_id) VALUES (2, 1, 12.01, 1.01, 2, 7, 1);
 INSERT INTO VCD_RETURN (id, vcd_id, user_id, expire) VALUES (1, 1, 1, 0);
 INSERT INTO VCD_SALE (id, vcd_id, vcd_price, vcd_number, user_id) VALUES (1, 1, 12.01, 2, 1);
+INSERT INTO VCD_SALE (id, vcd_id, vcd_price, vcd_number, user_id) VALUES (2, 2, 12.02, 2, 1);
+INSERT INTO VCD_SALE (id, vcd_id, vcd_price, vcd_number, user_id) VALUES (3, 3, 12.03, 2, 1);
+INSERT INTO VCD_SALE (id, vcd_id, vcd_price, vcd_number, user_id) VALUES (4, 3, 12.03, 2, 1);
 INSERT INTO VCD_SUPPLY (id, supplier_id, vcd_id, number) VALUES (1, 1, 1, 2);
